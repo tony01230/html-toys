@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Untitled Document</title>
+
+<style>
+	table, th, td {
+		border: 1px solid black;
+	}
+	.flex-container {
+  		display: flex;
+		flex-direction: row;
+		justify-content: center;
+	}
+</style>
+</head>
+
+<script>
+	var ListDirections = ""
+	var ListDirectionsDecimal = 0
+	var parentList = []
+	var currentList = []
+	// ListDirections is just a binary number - Keep in mind that!!!
+	// You can store the current list as a decimal number and convert 
+	// that to back into a list. Is this what Binary Search is?
+	
+	function FirstGeneration(){
+		let list = document.getElementById("list").value.split("\n")
+		if (list.length < 3){
+			return alert("Error: List less than three.")	
+		}
+		parentList = splitList(list)
+		currentList = parentList
+		document.getElementById("generateList").style.display = "none"
+		document.getElementById("generatedList").style.display = "inline-flex"
+		displayList(parentList)
+	}
+	
+	function splitList(List2Split){
+		// Input List = []
+		let midpoint = Math.floor(List2Split.length/2)
+		// Output List [0:Midpoint],[Midpoint],[Midpoint:]
+		return [List2Split.slice(0,midpoint), List2Split[midpoint],List2Split.slice(midpoint+1,List2Split.length)]
+	}
+	
+	function List2Eval(ListDirections, NameOfList){
+		ListDirections = ListDirections.toLowerCase().replace(/l/g, "0").replace(/r/g, "2").split("")
+		let statement = NameOfList
+        for (index in ListDirections){
+			statement += "["+ ListDirections[index] +"]"
+		}
+		return statement
+	}
+	
+	function generateList(){
+		function decodeListDirectionsDecimal(){
+			function dec2bin(dec){
+    			return (dec >>> 0).toString(2);
+			}
+		
+			ListDirections = dec2bin(ListDirectionsDecimal).replace(/0/g, "l").replace(/1/g, "r")
+		}
+		if (ListDirections == ""){
+			decodeListDirectionsDecimal()
+		}
+		else{
+			ListDirectionsDecimal += 1
+			decodeListDirectionsDecimal()
+		}
+		let evaluationStatement = List2Eval(ListDirections,"parentList")
+		currentList = eval(evaluationStatement)
+		displayList(splitList(currentList))
+	}
+	
+	function writeList(Mode){
+		function readHTML(HTMLId, ColData){
+			HTMLId = document.getElementById(HTMLId)
+			let readList = new Array
+			for (i = 1; i < HTMLId.rows.length; i++) {
+				readList.push(HTMLId.rows[i].cells[ColData].innerText)
+			}
+			return readList
+		}
+		
+		currentList.length = 3
+		currentList[0] = readHTML(Mode+"Left", 1)
+		currentList[2] = readHTML(Mode+"Right", 1)
+		generateList()
+	}
+	
+//	function findList(ListDirections, List2Find){
+//        ListDirections = ListDirections.toLowerCase()
+//        switch (ListDirections.slice(0,1)){
+//            case 'l':
+//			    List2Find = List2Find[0];
+//                break;
+//            case 'r':
+//			    List2Find = List2Find[2];
+//                break;
+//            default:
+//                return List2Find
+//        }        
+//        console.log(JSON.stringify(List2Find))
+//        return findList(ListDirections.slice(1, ListDirections.length), List2Find);
+//	}
+// style="display:inline-flex;"
+	
+	function displayList(List2Display){
+		// yoinked from https://stackoverflow.com/a/16155417
+		var leftList = document.getElementById("listLeft")
+		var rightList = document.getElementById("listRight")
+		leftList.innerHTML = "<tr><th>Move?</th><th>Program Name</th</tr>";
+		rightList.innerHTML = "<tr><th>Move?</th><th>Program Name</th</tr>";
+		
+		for (i = 0; i < List2Display[0].length; i++){
+			let newRow = document.createElement("tr");
+			let newProgram = document.createElement("th");
+			newProgram.innerHTML = "<button onClick=\"updateSwap(this, &quot;r&quot;)\">--&gt;</button>"
+			newRow.appendChild(newProgram);
+			newProgram = document.createElement("th");
+			newProgram.innerHTML = List2Display[0][i]
+			newRow.appendChild(newProgram);
+			leftList.appendChild(newRow);
+		}
+		for (i = 0; i < List2Display[2].length; i++){
+			let newRow = document.createElement("tr");
+			let newProgram = document.createElement("th");
+			newProgram.innerHTML = "<button onClick=\"updateSwap(this, &quot;l&quot;)\">&lt;--;</button>"
+			newRow.appendChild(newProgram);
+			newProgram = document.createElement("th");
+			newProgram.innerHTML = List2Display[2][i]
+			newRow.appendChild(newProgram);
+			rightList.appendChild(newRow);
+		}
+	}
+		
+	function updateInternalRanking(event, direction){
+		// yoinked from https://stackoverflow.com/a/4955223
+		event = event.parentNode.parentNode
+		let parent = event.parentNode
+		switch (direction){
+            case 'u':
+			    let previous = event.previousElementSibling
+				if (previous.id == "header") return
+    			parent.insertBefore(event, previous)
+            break;
+            case 'd':
+			    let next = event.nextSibling;
+			    parent.removeChild(event);
+			    if (next.nextSibling)
+    			    parent.insertBefore(event, next.nextSibling);
+			    else
+    			    parent.appendChild(event);
+            break;
+            default:
+                return
+        }
+	}
+	
+	function updateSwap(event, direction){
+		// yoinked from https://stackoverflow.com/a/4955223
+		switch (direction){
+            case 'l':
+				event.innerHTML = "--&gt;"
+				event.setAttribute( "onClick", "updateSwap(this, 'r')" )
+				event = event.parentNode.parentNode
+			    document.getElementById("listLeft").appendChild(event)
+            break;
+            case 'r':
+				event.innerHTML = "&lt;--"
+				event.setAttribute( "onClick", "updateSwap(this, 'l')" )
+				event = event.parentNode.parentNode
+			    document.getElementById("listRight").appendChild(event)
+            break;
+            default:
+                return
+        }
+	}
+	
+</script>
+
+<body>
+	<h1>Test</h1>
+	<div id="generateList">
+		<textarea id="list" rows="10" cols="60"></textarea>
+		<br><br>
+		<button onclick="FirstGeneration()">Read</button>
+	</div>
+	
+	<br><br>
+	
+	<div id="generatedList" class="flex-container">
+	  <div>
+		<table id="listLeft">
+  			<tr>
+    		<th>Swap Sides?</th>
+    		<th>Program Name</th>
+  			</tr>
+  			<tr>
+				<th><button onClick="updateSwap(this, &quot;r&quot;)">--&gt;</button></th>
+    			<th>Program Name</th>
+  			</tr>
+		</table>
+	  </div>
+
+	  <div style="padding: 5%;">
+			<h5>Swap to other side.</h5>
+	  </div>
+		
+      <div>
+		<table id="listRight">
+  			<tr>
+    		<th>Swap Sides?</th>
+    		<th>Program Name</th>
+  			</tr>
+  			<tr>
+				<th><button onClick="updateSwap(this, &quot;l&quot;)">&lt;--</button></th>
+   			  <th>Program Name</th>
+  			</tr>
+		</table>
+	  </div>
+	</div>
+	
+	<br><br>
+	
+	<div id="rankingList" class="flex-container">
+	  <div>
+		<table id="rankLeft">
+  			<tr id="header">
+			<th>Rank internally?</th>
+    		<th>Program Name</th>
+  			</tr>
+  			<tr>
+		  		<th><button onClick="updateInternalRanking(this, &quot;u&quot;)">Up</button> <button onClick="updateInternalRanking(this, &quot;d&quot;)">Down</button></th>
+    			<th>Program Name1</th>
+  			</tr>
+			<tr>
+		  		<th><button onClick="updateInternalRanking(this, &quot;u&quot;)">Up</button> <button onClick="updateInternalRanking(this, &quot;d&quot;)">Down</button></th>
+    			<th>Program Name2</th>
+  			</tr>
+			<tr>
+		  		<th><button onClick="updateInternalRanking(this, &quot;u&quot;)">Up</button> <button onClick="updateInternalRanking(this, &quot;d&quot;)">Down</button></th>
+    			<th>Program Name3</th>
+  			</tr>
+		</table>
+	  </div>
+
+	  <div style="padding: 10px;">
+			<h5>Rank between and internally.</h5>
+	  </div>
+
+      <div>
+		<table id="rankRight">
+		    <tr id="header">
+			<th>Rank internally?</th>
+    		<th>Program Name</th>
+  			</tr>
+  			<tr>
+		  		<th><button onClick="updateInternalRanking(this, &quot;u&quot;)">Up</button> <button onClick="updateInternalRanking(this, &quot;d&quot;)">Down</button></th>
+    			<th>Program Name1</th>
+  			</tr>
+			<tr>
+		  		<th><button onClick="updateInternalRanking(this, &quot;u&quot;)">Up</button> <button onClick="updateInternalRanking(this, &quot;d&quot;)">Down</button></th>
+    			<th>Program Name2</th>
+  			</tr>
+			<tr>
+		  		<th><button onClick="updateInternalRanking(this, &quot;u&quot;)">Up</button> <button onClick="updateInternalRanking(this, &quot;d&quot;)">Down</button></th>
+    			<th>Program Name3</th>
+  			</tr>
+		</table>
+	  </div>
+	</div>
+	
+	<br><br>
+	
+	<div class="flex-container" style="height:25px;">
+		<button onClick="writeList('list')">Read Lists</button>
+		<h4 style="margin: 5px;">Current List :</h5>
+		<input disabled id="ListDirections"></input>
+	</div>
+</body>
+</html>
