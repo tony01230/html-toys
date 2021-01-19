@@ -18,8 +18,7 @@
 </head>
 
 <script>
-	var ListDirections = ""
-	var ListDirectionsDecimal = 0
+	var ListDirections = "0"
 	var parentList = []
 	var currentList = []
 	// ListDirections is just a binary number - Keep in mind that!!!
@@ -46,7 +45,8 @@
 	}
 	
 	function List2Eval(ListDirections, NameOfList){
-		ListDirections = ListDirections.toLowerCase().replace(/l/g, "0").replace(/r/g, "2").split("")
+		ListDirections = ListDirections.split("")
+		//.toLowerCase().replace(/l/g, "0").replace(/r/g, "2")
 		let statement = NameOfList
         for (index in ListDirections){
 			statement += "["+ ListDirections[index] +"]"
@@ -54,24 +54,34 @@
 		return statement
 	}
 	
+	var ListFlag = 0
 	function generateList(){
-		function decodeListDirectionsDecimal(){
-			function dec2bin(dec){
-    			return (dec >>> 0).toString(2);
-			}
+		// if list is smaller than blank, set the thing to false
 		
-			ListDirections = dec2bin(ListDirectionsDecimal).replace(/0/g, "l").replace(/1/g, "r")
+		let evaluationStatement = List2Eval(ListDirections,"parentList")
+		console.log(evaluationStatement)
+		currentList = eval(evaluationStatement)
+		
+		if (evaluationStatement == "parentList[2]"){
+			ListFlag += 1
 		}
-		if (ListDirections == ""){
-			decodeListDirectionsDecimal()
+		else if (ListFlag == 2){
+			return
+		}
+		
+		if (currentList.length > 4){
+			ListDirections += "0"
+			return displayList(splitList(currentList))
+		}
+		else if (ListDirections.slice(ListDirections.length-1, ListDirections.length) == "0") {
+			ListDirections = ListDirections.slice(0, ListDirections.length-2) + "2"
+			return generateList()
 		}
 		else{
-			ListDirectionsDecimal += 1
-			decodeListDirectionsDecimal()
+			ListDirections = ListDirections.slice(0, ListDirections.length-1) + "0"
+			return generateList()
 		}
-		let evaluationStatement = List2Eval(ListDirections,"parentList")
-		currentList = eval(evaluationStatement)
-		displayList(splitList(currentList))
+		
 	}
 	
 	function writeList(Mode){
@@ -86,6 +96,7 @@
 		
 		currentList.length = 3
 		currentList[0] = readHTML(Mode+"Left", 1)
+		currentList[1] = document.getElementById("SplitChar").innerHTML
 		currentList[2] = readHTML(Mode+"Right", 1)
 		generateList()
 	}
@@ -113,6 +124,8 @@
 		var rightList = document.getElementById("listRight")
 		leftList.innerHTML = "<tr><th>Move?</th><th>Program Name</th</tr>";
 		rightList.innerHTML = "<tr><th>Move?</th><th>Program Name</th</tr>";
+		
+		document.getElementById("SplitChar").innerHTML = List2Display[1]
 		
 		for (i = 0; i < List2Display[0].length; i++){
 			let newRow = document.createElement("tr");
@@ -205,8 +218,10 @@
 		</table>
 	  </div>
 
-	  <div style="padding: 5%;">
-			<h5>Swap to other side.</h5>
+	  <div style="padding: 1%;">
+		<h5 id="SplitChar"></h5>  	
+		<h5 style="word-wrap:break-word;">Left are items more important than above, 
+			<br> right are less important than above.</h5>
 	  </div>
 		
       <div>
