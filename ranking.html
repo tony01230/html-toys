@@ -27,6 +27,8 @@
 	// You can store the current list as a decimal number and convert 
 	// that to back into a list. Is this what Binary Search is?
 	
+	// Update, No, your visualization proves it doesnt work like that.
+	
 	function FirstGeneration(){
 		let list = document.getElementById("list").value.split("\n")
 		if (list.length < 3){
@@ -49,7 +51,6 @@
 	
 	function List2Eval(ListDirections, NameOfList){
 		ListDirections = ListDirections.split("")
-		//.toLowerCase().replace(/l/g, "0").replace(/r/g, "2")
 		let statement = NameOfList
         for (index in ListDirections){
 			statement += "["+ ListDirections[index] +"]"
@@ -60,6 +61,7 @@
 	var ListFlag = 0
 	function generateList(){
 		// if list is smaller than blank, set the thing to false
+		// not this, this probably wrong
 		
 		let evaluationStatement = List2Eval(ListDirections,"parentList")
 		RankDirections.push(evaluationStatement)
@@ -162,7 +164,7 @@
 		parentList = parentList.replace(/\[/g, "").replace(/\]/g, "").replace(/\"/g, "").replace(/\,/g, "\n")
 		
 		let newRow = document.createElement("tr");
-		// https://stackoverflow.com/a/29339233
+		// yoinked https://stackoverflow.com/a/29339233
 		let NewDownloadElement = document.createElement("a");
 		NewDownloadElement.innerHTML = "Download Ranking"
   		var file = new Blob([parentList], {type: "text/plain"});
