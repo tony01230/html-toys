@@ -60,6 +60,7 @@
 	var ListFlag = 0
 	function generateList(){
 		// if list is smaller than blank, set the thing to false
+		
 		let evaluationStatement = List2Eval(ListDirections,"parentList")
 		RankDirections.push(evaluationStatement)
 		
@@ -106,7 +107,6 @@
 		
 		if (typeof currentList[0][0] === "string" && typeof currentList[0] === "object"){
 			UniqueRankDirections = UniqueRankDirections.slice(1,UniqueRankDirections.length)
-			console.log(evaluationStatement)
 			return displayRank(currentList)
 		}
 		else{
