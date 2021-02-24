@@ -38,6 +38,7 @@ for file in files:
     programDictExpenseSearchValues = ["Tuition (In-Province)", "Tuition (International)", "Residence Cost",
                                       "Meal Plan Cost"]
     for currentProgram in programs:
+        print("Printing Number", programs.index(currentProgram), file)
         programDict = {}
         programDict["name"] = currentProgram[0][0]
         programDict["institution"] = currentProgram[0][1]
@@ -45,11 +46,17 @@ for file in files:
         # search for programDetails...
         programDetails = currentProgram[1]
         for index, key in enumerate(programDictDetailKeys):
-            programDict[key] = programDetails[programDetails.index(programDictDetailSearchValues[index]) + 1]
+            try:
+                programDict[key] = programDetails[programDetails.index(programDictDetailSearchValues[index]) + 1]
+            except:
+                programDict[key] = "NotFound"
 
         programExpenses = currentProgram[2]
         for index, key in enumerate(programDictExpenseKeys):
-            programDict[key] = programExpenses[programExpenses.index(programDictExpenseSearchValues[index]) + 1]
+            try:
+                programDict[key] = programExpenses[programExpenses.index(programDictExpenseSearchValues[index]) + 1]
+            except:
+                programDict[key] = "NotFound"
 
         programDict["course-req"] = currentProgram[3]
 
