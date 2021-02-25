@@ -181,8 +181,8 @@
 		// yoinked from https://stackoverflow.com/a/16155417
 		var rankLeft = document.getElementById("rankLeft")
 		var rankRight = document.getElementById("rankRight")
-		rankLeft.innerHTML = "<tr id=\"header\"><th>Rank internally?</th><th>Program Name</th></tr>";
-		rankRight.innerHTML = "<tr id=\"header\"><th>Rank internally?</th><th>Program Name</th></tr>";
+		rankLeft.innerHTML = "<tr id=\"header\"><th>Rank internally?</th><th>Program Name</th><th>Delete?</th></tr>";
+		rankRight.innerHTML = "<tr id=\"header\"><th>Rank internally?</th><th>Program Name</th><th>Delete?</th></tr>";
 		let pushInnerHTML = "<button onClick=\"updateInternalRanking(this, &quot;u&quot;)\">Up</button> <button onClick=\"updateInternalRanking(this, &quot;d&quot;)\">Down</button>"
 		
 		document.getElementById("RankChar").innerHTML = List2Display[1]
@@ -197,6 +197,12 @@
 			newProgram = document.createElement("th");
 			newProgram.innerHTML = List2Display[0][i]
 			newRow.appendChild(newProgram);
+			
+			newProgram = document.createElement("th");
+			// allow deletion
+			newProgram.innerHTML = "<button onClick=\"deleteRank(this)\">X</button>"
+			newRow.appendChild(newProgram);
+			
 			rankLeft.appendChild(newRow);
 		}
 		for (i = 0; i < List2Display[2].length; i++){
@@ -207,6 +213,12 @@
 			newProgram = document.createElement("th");
 			newProgram.innerHTML = List2Display[2][i]
 			newRow.appendChild(newProgram);
+			
+			newProgram = document.createElement("th");
+			// allow deletion
+			newProgram.innerHTML = "<button onClick=\"deleteRank(this)\">X</button>"
+			newRow.appendChild(newProgram);
+			
 			rankRight.appendChild(newRow);
 		}
 	}
@@ -215,8 +227,8 @@
 		// yoinked from https://stackoverflow.com/a/16155417
 		var leftList = document.getElementById("listLeft")
 		var rightList = document.getElementById("listRight")
-		leftList.innerHTML = "<tr><th>Move?</th><th>Program Name</th</tr>";
-		rightList.innerHTML = "<tr><th>Move?</th><th>Program Name</th</tr>";
+		leftList.innerHTML = "<tr><th>Move?</th><th>Program Name</th><th>Delete?</th></tr>";
+		rightList.innerHTML = "<tr><th>Move?</th><th>Program Name</th><th>Delete?</th></tr>";
 		
 		document.getElementById("SplitChar").innerHTML = List2Display[1]
 		
@@ -225,9 +237,16 @@
 			let newProgram = document.createElement("th");
 			newProgram.innerHTML = "<button onClick=\"updateSwap(this, &quot;r&quot;)\">--&gt;</button>"
 			newRow.appendChild(newProgram);
+			
 			newProgram = document.createElement("th");
 			newProgram.innerHTML = List2Display[0][i]
 			newRow.appendChild(newProgram);
+			
+			newProgram = document.createElement("th");
+			// allow deletion
+			newProgram.innerHTML = "<button onClick=\"deleteRank(this)\">X</button>"
+			newRow.appendChild(newProgram);
+			
 			leftList.appendChild(newRow);
 		}
 		for (i = 0; i < List2Display[2].length; i++){
@@ -235,9 +254,16 @@
 			let newProgram = document.createElement("th");
 			newProgram.innerHTML = "<button onClick=\"updateSwap(this, &quot;l&quot;)\">&lt;--</button>"
 			newRow.appendChild(newProgram);
+			
 			newProgram = document.createElement("th");
 			newProgram.innerHTML = List2Display[2][i]
 			newRow.appendChild(newProgram);
+			
+			newProgram = document.createElement("th");
+			// allow deletion
+			newProgram.innerHTML = "<button onClick=\"deleteRank(this)\">X</button>"
+			newRow.appendChild(newProgram);
+			
 			rightList.appendChild(newRow);
 		}
 	}
@@ -285,6 +311,9 @@
         }
 	}
 	
+	function deleteRank(event){
+		event.parentNode.parentNode.remove()
+	}
 </script>
 
 <body>
